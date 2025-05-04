@@ -154,7 +154,7 @@ const allBtn = document.getElementById("all-btn");
 // add event listeners with the correct functions to each button
 unfundedBtn.addEventListener("click", filterUnfundedOnly);
 fundedBtn.addEventListener("click", filterFundedOnly);
-allBtn.addEventListenerI("click", showAllGames);
+allBtn.addEventListener("click", showAllGames);
 
 /*************************************************************************************
  * Challenge 6: Add more information at the top of the page about the company.
@@ -165,12 +165,22 @@ allBtn.addEventListenerI("click", showAllGames);
 const descriptionContainer = document.getElementById("description-container");
 
 // use filter or reduce to count the number of unfunded games
-
+const unfundedTotal = GAMES_JSON.reduce( (acc, game) => {
+    return acc + (game.pledged < game.goal ? 1 : 0);
+}, 0)
 
 // create a string that explains the number of unfunded games using the ternary operator
+const displayStr = `A total of $${totalRaised.toLocaleString('en-US')} has been raised for 
+${totalGames.toLocaleString('en-US')} ${totalGames === 1 ? "game" : "games"}. 
+Currently, ${unfundedTotal.toLocaleString('en-US')} ${unfundedTotal === 1 ? "game remains" : "games remain"} unfunded. 
+We need your help to fund these amazing games!`;
 
 
 // create a new DOM element containing the template string and append it to the description container
+const p = document.createElement("p");
+p.textContent = displayStr;
+descriptionContainer.appendChild(p);
+
 
 /************************************************************************************
  * Challenge 7: Select & display the top 2 games
