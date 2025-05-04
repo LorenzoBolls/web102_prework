@@ -43,13 +43,19 @@ function addGamesToPage(games) {
         // about each game
         // TIP: if your images are not displaying, make sure there is space
         // between the end of the src attribute and the end of the tag ("/>")
+        const percentFunded = Math.min(100, Math.floor((game.pledged / game.goal) * 100));
+
         div.innerHTML = 
         `
-        <img class="game-img" src="${game.img}" />
-        <h3>${game.name}</h3>
-        <p>${game.description}</p>
-
+          <img class="game-img" src="${game.img}" />
+          <h3>${game.name}</h3>
+          <p>${game.description}</p>
+          <p><strong>${percentFunded}%</strong> funded</p>
+          <div class="progress-bar-container">
+            <div class="progress-bar" style="width: ${percentFunded}%"></div>
+          </div>
         `;
+        
 
 
         // append the game to the games-container
@@ -92,7 +98,7 @@ const totalRaised = GAMES_JSON.reduce( (acc, game) => {
 // set inner HTML using template literal
 raisedCard.innerHTML = 
 `
-<p>${totalRaised.toLocaleString('en-US')}<p>
+<p>$${totalRaised.toLocaleString('en-US')}<p>
 `;
 
 // grab number of games card and set its inner HTML
@@ -198,12 +204,48 @@ const sortedGames =  GAMES_JSON.sort( (item1, item2) => {
 const [first, second, ...others] = sortedGames
 
 // create a new element to hold the name of the top pledge game, then append it to the correct element
-const firstGameh1 = document.createElement("h1");
-firstGameh1.textContent = first.name;
-firstGameContainer.appendChild(firstGameh1);
+const firstGameP = document.createElement("p");
+firstGameP.textContent = first.name;
+firstGameContainer.appendChild(firstGameP);
 
 
 // do the same for the runner up item
-const secondGameh1 = document.createElement("h1");
-secondGameh1.textContent = second.name;
-secondGameContainer.appendChild(secondGameh1);
+const secondGameP = document.createElement("p");
+secondGameP.textContent = second.name;
+secondGameContainer.appendChild(secondGameP);
+
+/************************************************************************************
+ * Bonus Features
+ */
+
+// Dark Mode
+const darkModeBtn = document.getElementById("dark-mode-toggle");
+
+darkModeBtn.addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
+});
+
+// Search Bar
+
+// Grab search input and button elements
+const searchInput = document.getElementById("search-input");
+const searchBtn = document.getElementById("search-btn");
+
+searchBtn.addEventListener("click", () => {
+    const query = searchInput.value.toLowerCase();
+
+    const filteredGames = GAMES_JSON.filter(game =>
+        game.name.toLowerCase().includes(query) ||
+        game.description.toLowerCase().includes(query)
+    );
+
+    deleteChildElements(gamesContainer);
+    addGamesToPage(filteredGames);
+});
+
+// search when pressing "enter"
+searchInput.addEventListener("keyup", (event) => {
+    if (event.key === "Enter") {
+        searchBtn.click();
+    }
+});
